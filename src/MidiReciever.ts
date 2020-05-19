@@ -20,10 +20,13 @@ export class MidiReciever {
       WebMidi.enable((err) => {
         if (err) reject(err);
         this.midiInput = WebMidi.inputs.find((i) => i.id === inputId);
+
+        // list inputs
+        // WebMidi.inputs.forEach((i) => console.log(i.id));
+
         eventHandlers.forEach((element) => {
           this.midiInput.addListener(element.type, element.channel, (e) => {
             if (!element.filter(e)) return;
-
             element.handle(e);
           });
         });

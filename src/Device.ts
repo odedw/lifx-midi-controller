@@ -1,5 +1,5 @@
 import Lifx from "node-lifx-lan";
-import { LifxLanDevice } from "./types/Lifx";
+import { LifxLanColor, LifxLanDevice } from "./types/Lifx";
 
 // Lifx.discover()
 //   .then((device_list) => {
@@ -39,7 +39,15 @@ export class Device {
     this.lifxLanDevice = lifxLanDevice;
   }
 
-  setColor() {}
+  setColor(color: LifxLanColor, duration: number = 0): Promise<void> {
+    return this.lifxLanDevice
+      .setColor({ color, duration })
+      .then(() => console.log(`Set Color:  ${JSON.stringify(color)}`));
+  }
+
+  turnOn(duration: number = 0): Promise<void> {
+    return this.lifxLanDevice.turnOn({ duration });
+  }
 
   toggle(duration: number = 0): Promise<void> {
     let promise: Promise<void> | undefined;
@@ -50,6 +58,7 @@ export class Device {
     }
     return promise.then(() => {
       this.power = !this.power;
+      console.log(`Switched ${this.power ? "on" : "off"}`);
     });
   }
 }
