@@ -1,17 +1,17 @@
 import { InputEvents, IMidiChannel } from "webmidi";
-
-export class EventHandler<T extends keyof InputEvents> {
-  type: T;
-  filter: (e: InputEvents[T]) => boolean;
-  handle: (e: InputEvents[T]) => void;
+export type EventType = keyof InputEvents;
+export class EventHandler {
+  filter: (e: any) => boolean;
+  handle: (e: any) => void;
   channel: IMidiChannel;
+  inputEvent: EventType;
   constructor(
-    type: T,
+    inputEvent: EventType,
     handle: () => void,
-    filter: (e: InputEvents[T]) => boolean = () => true,
+    filter: (e: any) => boolean = () => true,
     channel: IMidiChannel = "all"
   ) {
-    this.type = type;
+    this.inputEvent = inputEvent;
     this.filter = filter;
     this.handle = handle;
     this.channel = channel;

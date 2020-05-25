@@ -1,5 +1,6 @@
 import WebMidi, { Input } from "webmidi";
 import { EventHandler } from "./EventHandler";
+import { isMatch } from "./MidiUtils";
 global.navigator = require("web-midi-api");
 if (!global.performance)
   global.performance = { now: require("performance-now") };
@@ -15,23 +16,28 @@ declare global {
 export class MidiReciever {
   midiInput: Input;
   constructor() {}
-  start(inputId: string, eventHandlers: any): Promise<void> {
+  start(inputId: string, eventHandlers: EventHandler[]): Promise<void> {
     return new Promise((resolve, reject) => {
-      WebMidi.enable((err) => {
-        if (err) reject(err);
-        this.midiInput = WebMidi.inputs.find((i) => i.id === inputId);
+      try {
+        WebMidi.enable((err) => {
+          if (err) reject(err);
+          // list inputs
+          WebMidi.inputs.forEach((i) => console.log(i.id));
 
-        // list inputs
-        // WebMidi.inputs.forEach((i) => console.log(i.id));
-
-        eventHandlers.forEach((element) => {
-          this.midiInput.addListener(element.type, element.channel, (e) => {
-            if (!element.filter(e)) return;
-            element.handle(e);
+          this.midiInput = WebMidi.inputs.find((i) => i.id === inputId);
+          this.midiInput.addListener("noteon", "all", (e) => {
+            eventHandlers
+              .filter((element) => element.filter(e))
+              .forEach((element) => {
+                element.handle(e);
+              });
+            console.log(`${e.channel} ${e.note.name}${e.note.octave}`);
           });
+          resolve();
         });
-        resolve();
-      });
+      } catch (err) {
+        reject(err);
+      }
     });
   }
   stop() {}

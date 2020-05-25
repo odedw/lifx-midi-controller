@@ -16,8 +16,9 @@ import { LifxLanColor, LifxLanDevice } from "./types/Lifx";
 export class Device {
   lifxLanDevice: LifxLanDevice;
   power: boolean;
+  color: any;
   static create(ip: string, mac: string): Promise<Device> {
-    let instance;
+    let instance: Device;
     return new Promise((resolve, reject) => {
       Lifx.createDevice({
         mac,
@@ -28,7 +29,13 @@ export class Device {
           return d.getLightState();
         })
         .then((state) => {
+          // console.log("-----------------------");
+          // console.log(state);
+          // console.log("-----------------------");
+
+          // this.initialState = state;
           instance.power = state.power;
+          instance.color = state.color;
           resolve(instance);
         })
         .catch((error) => reject(error));
@@ -40,9 +47,10 @@ export class Device {
   }
 
   setColor(color: LifxLanColor, duration: number = 0): Promise<void> {
-    return this.lifxLanDevice
-      .setColor({ color, duration })
-      .then(() => console.log(`Set Color:  ${JSON.stringify(color)}`));
+    return this.lifxLanDevice.setColor({ color, duration }).then(() => {
+      console.log(`Set Color:  ${JSON.stringify(color)}`);
+      this.color = color;
+    });
   }
 
   turnOn(duration: number = 0): Promise<void> {
