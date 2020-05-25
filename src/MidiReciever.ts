@@ -22,7 +22,7 @@ export class MidiReciever {
         WebMidi.enable((err) => {
           if (err) reject(err);
           // list inputs
-          WebMidi.inputs.forEach((i) => console.log(i.id));
+          // WebMidi.inputs.forEach((i) => console.log(i.id));
 
           this.midiInput = WebMidi.inputs.find((i) => i.id === inputId);
           this.midiInput.addListener("noteon", "all", (e) => {
