@@ -4,15 +4,13 @@ import { SessionEventEmitter } from "./event-emitters/SessionEventEmitter";
 export class Session {
   static start() {
     EventSubjectRepository.subjectFor<void>(
-      SessionEventEmitter.START_EVENT,
-      SessionEventEmitter.name
+      SessionEventEmitter.START_EVENT
     ).next();
   }
 
   static stop() {
     EventSubjectRepository.subjectFor<void>(
-      SessionEventEmitter.STOP_EVENT,
-      SessionEventEmitter.name
+      SessionEventEmitter.STOP_EVENT
     ).next();
   }
 }

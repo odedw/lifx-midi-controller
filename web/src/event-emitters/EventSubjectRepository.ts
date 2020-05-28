@@ -3,12 +3,11 @@ import * as log from "loglevel";
 
 export class EventSubjectRepository {
   private static subjects: { [key: string]: any } = {};
-  static subjectFor<T>(name: string, emmiter: string): Subject<T> {
-    const key = `${name}.${emmiter}`;
+  static subjectFor<T>(key: string): Subject<T> {
     if (!EventSubjectRepository.subjects[key]) {
       const subject = new Subject<T>();
       subject.subscribe((t) => {
-        log.info(`New ${name} event from ${emmiter}`);
+        log.info(`New ${key} event`);
       });
       EventSubjectRepository.subjects[key] = subject;
     }
