@@ -1,16 +1,17 @@
 import { LifxDevice as LifxDeviceInterface } from "../../../shared/types";
+import * as log from "loglevel";
 
 class LifxDevice implements LifxDeviceInterface {
   toggle(duration: number = 0): Promise<void> {
-    console.log("toggle");
+    log.info("toggle");
     return Promise.resolve();
   }
   turnOfF(duration: number = 0): Promise<void> {
-    console.log("turnOfF");
+    log.info("turnOfF");
     return Promise.resolve();
   }
   turnOn(duration: number = 0): Promise<void> {
-    console.log("turnOn");
+    log.info("turnOn");
     return Promise.resolve();
   }
   setColor(
@@ -18,7 +19,7 @@ class LifxDevice implements LifxDeviceInterface {
     brightness: number,
     duration: number = 0
   ): Promise<void> {
-    console.log("setColor");
+    log.info("setColor");
     return Promise.resolve();
   }
 }
