@@ -1,4 +1,9 @@
-export interface EventEmitter {
-  init(): Promise<void>;
-  getEvents(): object[];
+export abstract class EventEmitter {
+  init(): Promise<void> {
+    return Promise.resolve();
+  }
+
+  get name(): string {
+    return this.constructor.name;
+  }
 }

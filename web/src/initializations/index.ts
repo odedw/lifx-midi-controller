@@ -1,6 +1,6 @@
 import * as log from "loglevel";
 import emitters, { EventEmitter } from "../event-emitters";
-
+import routine from "../routine";
 const createInitPromiseForEmitter = (e: EventEmitter) =>
   e
     .init()
@@ -10,4 +10,6 @@ const createInitPromiseForEmitter = (e: EventEmitter) =>
 export default async () => {
   log.setDefaultLevel(log.levels.INFO);
   await Promise.all(emitters.map(createInitPromiseForEmitter));
+
+  routine.init();
 };

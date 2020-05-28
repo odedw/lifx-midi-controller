@@ -1,6 +1,6 @@
 import Lifx from "node-lifx-lan";
 import { LifxLanColor, LifxLanDevice } from "./types/Lifx";
-
+import { LifxDevice } from "../../shared/types";
 // Lifx.discover()
 //   .then((device_list) => {
 //     device_list.forEach((device) => {
@@ -36,7 +36,7 @@ export async function retry<T>(
   }
 }
 
-export class Device {
+export class Device implements LifxDevice {
   lifxLanDevice: LifxLanDevice;
   power: boolean;
   color: any;
