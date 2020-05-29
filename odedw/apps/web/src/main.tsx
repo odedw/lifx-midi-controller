@@ -1,5 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import init from './app/initializations';
+
+init();
 
 import App from './app/app';
 
