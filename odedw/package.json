@@ -28,9 +28,14 @@
   "private": true,
   "dependencies": {
     "document-register-element": "1.13.1",
+    "loglevel": "^1.6.8",
+    "node-lifx-lan": "^0.4.1",
     "react": "16.12.0",
     "react-dom": "16.12.0",
-    "styled-components": "5.0.1"
+    "rxjs": "^6.5.5",
+    "styled-components": "5.0.1",
+    "webmidi": "^2.5.1",
+    "ws": "^7.3.0"
   },
   "devDependencies": {
     "@nrwl/cypress": "9.3.0",
@@ -46,6 +51,7 @@
     "@types/react": "16.9.17",
     "@types/react-dom": "16.9.4",
     "@types/styled-components": "5.0.1",
+    "@types/webmidi": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "2.19.2",
     "@typescript-eslint/parser": "2.19.2",
     "cypress": "^4.1.0",
