@@ -1,8 +1,8 @@
-// import { LifxDevice as LifxDeviceInterface } from "../../../shared";
+import { LifxDevice as LifxDeviceInterface } from '@odedw/shared';
+
 import * as log from 'loglevel';
 
-class LifxDevice {
-  //implements LifxDeviceInterface {
+class LifxDevice implements LifxDeviceInterface {
   socket: WebSocket;
   constructor() {
     this.socket = new WebSocket('ws://127.0.0.1:2424');
