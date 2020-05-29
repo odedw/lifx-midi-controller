@@ -1,6 +1,6 @@
 import Lifx from "node-lifx-lan";
 import { LifxLanColor, LifxLanDevice } from "./types/Lifx";
-import { LifxDevice } from "../../shared/types";
+import { LifxDevice } from "../../shared";
 // Lifx.discover()
 //   .then((device_list) => {
 //     device_list.forEach((device) => {
@@ -53,19 +53,11 @@ export class Device implements LifxDevice {
         500
       )
         .then((d: any) => {
-          console.log("-----------------------device created");
           instance = new Device(d);
           return d.getLightState();
         })
         .then((state) => {
-          // console.log("-----------------------");
-          // console.log(state);
-          // console.log("-----------------------");
-
-          // this.initialState = state;
-
           instance.power = state.power;
-          // instance.color = state.color;
           resolve(instance);
         })
         .catch((error) => reject(error));
@@ -93,7 +85,7 @@ export class Device implements LifxDevice {
     return this.lifxLanDevice.turnOn({ duration });
   }
 
-  turnOfF(duration: number = 0): Promise<void> {
+  turnOff(duration: number = 0): Promise<void> {
     return this.lifxLanDevice.turnOff({ duration });
   }
 

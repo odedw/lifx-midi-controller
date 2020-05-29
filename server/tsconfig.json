@@ -5,7 +5,9 @@
     "target": "es6",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "./dist",
+    "resolveJsonModule": true
   },
-  "lib": ["es2015"]
+  "lib": ["es2015"],
+  "files": ["src/index.ts"]
 }

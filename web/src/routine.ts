@@ -15,13 +15,9 @@ export class Routine {
   async init() {
     SessionEventEmitter.start.subscribe(this.subscribe.bind(this));
     SessionEventEmitter.stop.subscribe(this.unsubscribe.bind(this));
-
-    currentColor = randomColor();
-    await lifxDevice.setColor(currentColor, 0.6);
-    await lifxDevice.turnOn();
   }
 
-  subscribe() {
+  async subscribe() {
     this.subscriptions = [
       MidiEventEmitter.noteOn("C3").subscribe(() =>
         lifxDevice.setColor(currentColor, 0.6)
@@ -36,9 +32,15 @@ export class Routine {
         lifxDevice.setColor(currentColor, 0.6);
       }),
     ];
+
+    currentColor = randomColor();
+    await lifxDevice.setColor(currentColor, 0.6);
+    await lifxDevice.turnOn();
   }
 
-  unsubscribe() {
+  async unsubscribe() {
+    await lifxDevice.turnOff();
+
     this.subscriptions.forEach((s) => s.unsubscribe());
     this.subscriptions = [];
   }

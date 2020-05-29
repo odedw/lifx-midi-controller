@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "rimraf dist && tsc && node dist/app.js",
+    "start": "rimraf dist && tsc && node dist/server/src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -20,6 +20,7 @@
     "node-lifx-lan": "^0.4.1",
     "performance-now": "^2.1.0",
     "web-midi-api": "^2.0.7",
-    "webmidi": "^2.5.1"
+    "webmidi": "^2.5.1",
+    "ws": "^7.3.0"
   }
 }

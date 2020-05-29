@@ -1,6 +1,8 @@
 import * as log from "loglevel";
 import emitters, { EventEmitter } from "../event-emitters";
 import routine from "../routine";
+import lifxDevice from "../action-repositiories/LifxDevice";
+
 const createInitPromiseForEmitter = (e: EventEmitter) =>
   e
     .init()
@@ -10,6 +12,7 @@ const createInitPromiseForEmitter = (e: EventEmitter) =>
 export default async () => {
   log.setDefaultLevel(log.levels.INFO);
   await Promise.all(emitters.map(createInitPromiseForEmitter));
+  await lifxDevice.init();
 
   routine.init();
 };

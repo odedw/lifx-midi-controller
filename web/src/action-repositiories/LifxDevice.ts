@@ -1,17 +1,35 @@
-import { LifxDevice as LifxDeviceInterface } from "../../../shared/types";
+import { LifxDevice as LifxDeviceInterface } from "../../../shared";
 import * as log from "loglevel";
 
 class LifxDevice implements LifxDeviceInterface {
+  socket: WebSocket;
+  constructor() {
+    this.socket = new WebSocket(process.env.REACT_APP_WS_SERVER || "");
+  }
+
+  init(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.socket.onopen = (event) => {
+        log.info("connected");
+        resolve();
+      };
+    });
+  }
+
   toggle(duration: number = 0): Promise<void> {
     log.info("toggle");
     return Promise.resolve();
   }
-  turnOfF(duration: number = 0): Promise<void> {
-    log.info("turnOfF");
+
+  turnOff(duration: number = 0): Promise<void> {
+    log.info("turnOff");
+    this.socket.send("turnOff");
     return Promise.resolve();
   }
+
   turnOn(duration: number = 0): Promise<void> {
     log.info("turnOn");
+    this.socket.send("turnOn");
     return Promise.resolve();
   }
   setColor(
