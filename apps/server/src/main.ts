@@ -9,7 +9,7 @@ async function main(): Promise<void> {
   const wss = new WS.Server({ port: 2424 });
 
   wss.on('connection', function connection(ws) {
-    console.log('connected...');
+    log.info('Connected');
 
     ws.on('message', (message) => {
       console.log('received: %s', message);
@@ -18,11 +18,9 @@ async function main(): Promise<void> {
         device.handle(payload);
       }
     });
-
-    ws.send('something');
   });
-  log.info('running');
+  log.info('Running');
 }
 
-log.info('Starting up...');
+log.info('Starting up');
 main();

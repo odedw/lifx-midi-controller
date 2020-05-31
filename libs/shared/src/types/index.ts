@@ -1,2 +1,2 @@
-export * from './LifxDevice';
+export * from './SmartLightInterface';
 export * from './WsMessage';

@@ -1,6 +1,6 @@
 import { WsMessage } from './WsMessage';
 
-export interface LifxDevice {
+export interface SmartLightInterface {
   toggle: (duration: number) => Promise<void>;
   turnOff: (duration: number) => Promise<void>;
   turnOn: (duration: number) => Promise<void>;

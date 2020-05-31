@@ -1,7 +1,7 @@
 import { SessionEventEmitter } from "./event-emitters/SessionEventEmitter";
 import MidiEventEmitter from "./event-emitters/MidiEventEmitter";
 import { Subscription } from "rxjs";
-import lifxDevice from "./action-repositiories/LifxDevice";
+import lifxDevice from "./action-repositiories/SmartLight";
 
 let colors = ["#00F1FF", "#0161E8", "#290CFF", "#9B00E8", "#FF019A"];
 let currentColor = colors[0];
