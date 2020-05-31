@@ -1,7 +1,7 @@
 # TODO
 
-[ ] Add options through args
+[x] Add config (file or env)
 
-[ ] Add config (file or env)
+[x] Add logging
 
-[ ] Add logging
+[] Less boilerplat for adding commands

@@ -8,10 +8,11 @@ export interface SmartLightInterface {
     brightness: number,
     duration: number
   ) => Promise<void>;
+  blink: (increment: number, duration: number) => Promise<void>;
 }
 
 export abstract class SmartLightMessage implements WsMessage {
-  abstract method: string;
+  abstract message: string;
   static target = 'SmartLight';
   target: string = SmartLightMessage.target;
   duration: number;
@@ -20,20 +21,30 @@ export abstract class SmartLightMessage implements WsMessage {
   }
 }
 export class TurnOnMessage extends SmartLightMessage {
-  method = 'turnOn';
+  message = 'turnOn';
 }
 
 export class TurnOffMessage extends SmartLightMessage {
-  method = 'turnOff';
+  message = 'turnOff';
 }
 
 export class SetColorMessage extends SmartLightMessage {
-  method = 'setColor';
+  message = 'setColor';
   hex: string;
   brightness: number;
-  constructor(hex: string, brightness: number, duration:number = 0) {
+  constructor(hex: string, brightness: number, duration: number = 0) {
     super(duration);
     this.hex = hex;
     this.brightness = brightness;
+  }
+}
+
+export class BlinkMessage extends SmartLightMessage {
+  message = 'blink';
+  increment: number;
+
+  constructor(increment: number = 0.5, duration: number = 0) {
+    super(duration);
+    this.increment = increment;
   }
 }

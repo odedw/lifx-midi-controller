@@ -1,7 +1,8 @@
 import Lifx from 'node-lifx-lan';
-import { LifxLanColor, LifxLanDevice } from './types/Lifx';
+import { LifxLanColor, LifxLanDevice, LifxLanColorCSS } from './types/Lifx';
 import { SmartLightInterface } from '@odedw/shared';
 import { log } from '@odedw/shared';
+import { delay } from './utils';
 
 // Lifx.discover()
 //   .then((device_list) => {
@@ -18,26 +19,30 @@ import { log } from '@odedw/shared';
 export class LifxDevice implements SmartLightInterface {
   lifxLanDevice: LifxLanDevice;
   power: boolean;
-  color: any;
+  color: LifxLanColorCSS;
   static create(ip: string, mac: string): Promise<LifxDevice> {
     let instance: LifxDevice;
     log.info('Creating LIFX device');
-    return (
-      Lifx.createDevice({
-        mac,
-        ip,
-      })
-        .then((d: any) => {
-          instance = new LifxDevice(d);
-          return instance.turnOff(0);
-        })
-        // .then(() => instance.setColor('#FFFFFF', 1, 0))
-        .then(() => instance)
-    );
+    return Lifx.createDevice({
+      mac,
+      ip,
+    })
+      .then((d: any) => (instance = new LifxDevice(d)))
+      .then(() => instance.turnOff(0))
+      .then(() => instance.setColor('#FFFFFF', 1, 0))
+      .then(() => instance);
   }
 
   private constructor(lifxLanDevice: LifxLanDevice) {
     this.lifxLanDevice = lifxLanDevice;
+  }
+
+  blink(increment: number, duration: number): Promise<void> {
+    const brightness = this.color.brightness;
+    return this.setColor(this.color.css, Math.min(1, brightness + increment), 0)
+      .then(() => delay(duration))
+      .then(() => this.setColor(this.color.css, brightness, 0));
+    return Promise.resolve();
   }
 
   setColor(
@@ -45,12 +50,10 @@ export class LifxDevice implements SmartLightInterface {
     brightness: number,
     duration: number = 0
   ): Promise<void> {
-    return this.lifxLanDevice
-      .setColor({ color: { css: hex, brightness } as LifxLanColor, duration })
-      .then(() => {
-        console.log(`Set Color:  ${hex}, ${brightness}`);
-      })
-      .catch((err) => console.log('failed to set color - ' + err));
+    const color = { css: hex, brightness } as LifxLanColorCSS;
+    return this.lifxLanDevice.setColor({ color, duration }).then(() => {
+      this.color = color;
+    });
   }
 
   turnOn(duration: number): Promise<void> {

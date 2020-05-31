@@ -1,12 +1,12 @@
-import { EventEmitter } from "./types";
-import WebMidi, { InputEventNoteon, IMidiChannel } from "webmidi";
-import { EventSubjectRepository } from "./EventSubjectRepository";
-import { Observable } from "rxjs";
-import { filter } from "rxjs/operators";
-import { isMatch } from "./MidiUtils";
+import { EventEmitter } from './types';
+import WebMidi, { InputEventNoteon, IMidiChannel } from 'webmidi';
+import { EventSubjectRepository } from './EventSubjectRepository';
+import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { isMatch } from './MidiUtils';
 
 export default class MidiEventEmitter extends EventEmitter {
-  static NOTE_ON_EVENT = "MidiEventEmitter.NOTE_ON_EVENT";
+  static NOTE_ON_EVENT = 'MidiEventEmitter.NOTE_ON_EVENT';
 
   init(): Promise<void> {
     return new Promise((resolve, reject) => {
@@ -17,10 +17,10 @@ export default class MidiEventEmitter extends EventEmitter {
         // WebMidi.inputs.forEach((i) => console.log(i.name));
 
         const midiInput = WebMidi.inputs.find(
-          (i) => i.name === "Arturia KeyStep 32"
+          (i) => i.name === 'loopMIDI Port' //"Arturia KeyStep 32"
         );
         if (!midiInput) return;
-        midiInput.addListener("noteon", "all", (e) => {
+        midiInput.addListener('noteon', 'all', (e) => {
           EventSubjectRepository.subjectFor<InputEventNoteon>(
             MidiEventEmitter.NOTE_ON_EVENT
           ).next(e);
@@ -31,8 +31,8 @@ export default class MidiEventEmitter extends EventEmitter {
   }
 
   static noteOn(
-    note: string = "",
-    channel: IMidiChannel = "all"
+    note: string = '',
+    channel: IMidiChannel = 'all'
   ): Observable<InputEventNoteon> {
     return EventSubjectRepository.subjectFor<InputEventNoteon>(
       MidiEventEmitter.NOTE_ON_EVENT

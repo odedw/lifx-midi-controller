@@ -5,6 +5,7 @@ import {
   TurnOnMessage,
   TurnOffMessage,
   SetColorMessage,
+  BlinkMessage,
 } from '@odedw/shared';
 
 export class SmartLightRouter {
@@ -17,14 +18,12 @@ export class SmartLightRouter {
   }
 
   public route(msg: SmartLightMessage) {
-    switch (msg.method) {
+    switch (msg.message) {
       case 'turnOn':
-        let turnOnMessage = msg as TurnOnMessage;
-        this.lifxDevice.turnOn(turnOnMessage.duration);
+        this.lifxDevice.turnOn(msg.duration);
         break;
       case 'turnOff':
-        let turnOnffMessage = msg as TurnOffMessage;
-        this.lifxDevice.turnOff(turnOnffMessage.duration);
+        this.lifxDevice.turnOff(msg.duration);
         break;
       case 'setColor':
         let setColorMessage = msg as SetColorMessage;
@@ -33,6 +32,11 @@ export class SmartLightRouter {
           setColorMessage.brightness,
           setColorMessage.duration
         );
+        break;
+      case 'blink':
+        let blinkMessage = msg as BlinkMessage;
+        this.lifxDevice.blink(blinkMessage.increment, blinkMessage.duration);
+        break;
       default:
         break;
     }

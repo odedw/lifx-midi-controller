@@ -2,7 +2,7 @@ import { log, WsMessage } from '@odedw/shared';
 
 class Server {
   private socket: WebSocket;
-
+  connected: boolean;
   constructor() {}
 
   public init(): Promise<void> {
@@ -14,6 +14,7 @@ class Server {
     return new Promise((resolve, reject) => {
       this.socket.onopen = (event) => {
         log.info('Connected to server');
+        this.connected = true;
         resolve();
       };
       this.socket.onerror = (event) => {
@@ -23,11 +24,21 @@ class Server {
       this.socket.onmessage = (ev) => {
         log.info('Recieved server message: ', ev.data);
       };
+
+      this.socket.onclose = (ev) => {
+        log.info('Socket closed');
+        this.connected = false;
+      };
     });
   }
 
-  public send(message: WsMessage) {
-    this.socket.send(JSON.stringify(message));
+  public async send(message: WsMessage): Promise<void> {
+    if (!this.connected) {
+      await this.connect();
+    }
+    const json = JSON.stringify(message);
+    await this.socket.send(json);
+    log.info('Sent: ', json);
   }
 }
 

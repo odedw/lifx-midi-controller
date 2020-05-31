@@ -31,6 +31,9 @@ export class Routine {
         currentColor = randomColor();
         smartLight.setColor(currentColor, 0.6);
       }),
+      MidiEventEmitter.noteOn('F3').subscribe(() => {
+        smartLight.blink(0.5, 100);
+      }),
     ];
 
     currentColor = randomColor();
