@@ -2,6 +2,7 @@ import { SessionEventEmitter } from './event-emitters/SessionEventEmitter';
 import MidiEventEmitter from './event-emitters/MidiEventEmitter';
 import { Subscription } from 'rxjs';
 import smartLight from './action-repositiories/SmartLight';
+import { mapToRange } from '@odedw/shared';
 
 let colors = ['#00F1FF', '#0161E8', '#290CFF', '#9B00E8', '#FF019A'];
 let currentColor = colors[0];
@@ -33,6 +34,9 @@ export class Routine {
       }),
       MidiEventEmitter.noteOn('F3').subscribe(() => {
         smartLight.blink(0.5, 100);
+      }),
+      MidiEventEmitter.cc(30).subscribe((e) => {
+        console.log(mapToRange(e.value, 0, 127, 0, 1));
       }),
     ];
 

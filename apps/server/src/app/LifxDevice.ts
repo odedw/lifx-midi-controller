@@ -1,8 +1,7 @@
 import Lifx from 'node-lifx-lan';
 import { LifxLanColor, LifxLanDevice, LifxLanColorCSS } from './types/Lifx';
 import { SmartLightInterface } from '@odedw/shared';
-import { log } from '@odedw/shared';
-import { delay } from './utils';
+import { log, delay } from '@odedw/shared';
 
 // Lifx.discover()
 //   .then((device_list) => {
