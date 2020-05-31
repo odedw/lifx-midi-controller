@@ -36,7 +36,7 @@ export class Routine {
         smartLight.blink(0.5, 100);
       }),
       MidiEventEmitter.cc(30).subscribe((e) => {
-        console.log(mapToRange(e.value, 0, 127, 0, 1));
+        // console.log(mapToRange(e.value, 0, 127, 0, 1));
       }),
     ];
 
