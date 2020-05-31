@@ -3,7 +3,7 @@ import {
   TurnOnMessage,
   TurnOffMessage,
 } from '@odedw/shared';
-import * as log from 'loglevel';
+import { log } from '@odedw/shared';
 
 class LifxDevice implements LifxDeviceInterface {
   socket: WebSocket;

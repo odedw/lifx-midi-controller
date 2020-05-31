@@ -1,6 +1,8 @@
 import Lifx from 'node-lifx-lan';
 import { LifxLanColor, LifxLanDevice } from './types/Lifx';
 import { LifxDevice, TurnOnMessage, TurnOffMessage } from '@odedw/shared';
+import { log } from '@odedw/shared';
+
 // Lifx.discover()
 //   .then((device_list) => {
 //     device_list.forEach((device) => {
@@ -12,29 +14,6 @@ import { LifxDevice, TurnOnMessage, TurnOffMessage } from '@odedw/shared';
 //   .catch((error) => {
 //     console.error(error);
 //   });
-
-export async function retry<T>(
-  fn: () => Promise<T>,
-  retriesLeft: number = 3,
-  interval: number = 1000,
-  exponential: boolean = false
-): Promise<T> {
-  try {
-    const val = await fn();
-    return val;
-  } catch (error) {
-    if (retriesLeft) {
-      console.log('Retrying...');
-      await new Promise((r) => setTimeout(r, interval));
-      return retry(
-        fn,
-        retriesLeft - 1,
-        exponential ? interval * 2 : interval,
-        exponential
-      );
-    } else throw new Error(`Max retries reached for function ${fn.name}`);
-  }
-}
 
 export class Device {
   // implements LifxDevice {
@@ -56,26 +35,20 @@ export class Device {
   color: any;
   static create(ip: string, mac: string): Promise<Device> {
     let instance: Device;
-    return new Promise((resolve, reject) => {
-      retry(
-        () =>
-          Lifx.createDevice({
-            mac,
-            ip,
-          }),
-        3,
-        500
-      )
+    log.info('Creating LIFX device');
+    return (
+      Lifx.createDevice({
+        mac,
+        ip,
+      })
         .then((d: any) => {
           instance = new Device(d);
-          return d.getLightState();
+          // return instance;
+          return instance.turnOff({ duration: 0 });
         })
-        .then((state) => {
-          instance.power = state.power;
-          resolve(instance);
-        })
-        .catch((error) => reject(error));
-    });
+        // .then(() => instance.setColor('#FFFFFF', 1, 0))
+        .then(() => instance)
+    );
   }
 
   private constructor(lifxLanDevice: LifxLanDevice) {

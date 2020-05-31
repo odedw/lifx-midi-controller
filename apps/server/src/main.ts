@@ -1,11 +1,11 @@
 import { Device } from './app/Device';
 import * as config from '../config.json';
-
+import { log } from '@odedw/shared';
 const WS = require('ws');
 
 async function main(): Promise<void> {
   const device = await Device.create(config.device.ip, config.device.mac);
-
+  // return;
   const wss = new WS.Server({ port: 2424 });
 
   wss.on('connection', function connection(ws) {
@@ -21,7 +21,8 @@ async function main(): Promise<void> {
 
     ws.send('something');
   });
-  console.log('running');
+  log.info('running');
 }
 
+log.info('Starting up...');
 main();

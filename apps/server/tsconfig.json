@@ -4,5 +4,5 @@
     "types": ["node", "jest"],
     "resolveJsonModule": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "../../libs/shared/src/logger.ts"]
 }
