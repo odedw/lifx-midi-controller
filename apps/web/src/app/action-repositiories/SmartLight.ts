@@ -8,11 +8,6 @@ import { server } from '../services';
 class SmartLight implements SmartLightInterface {
   constructor() {}
 
-  toggle(duration: number = 0): Promise<void> {
-    log.info('toggle');
-    return Promise.resolve();
-  }
-
   turnOn(duration: number = 0): Promise<void> {
     log.info('turnOn');
     server.send(new TurnOnMessage());

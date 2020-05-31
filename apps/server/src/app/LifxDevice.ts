@@ -1,6 +1,6 @@
 import Lifx from 'node-lifx-lan';
 import { LifxLanColor, LifxLanDevice } from './types/Lifx';
-import { LifxDevice, TurnOnMessage, TurnOffMessage } from '@odedw/shared';
+import { SmartLightInterface } from '@odedw/shared';
 import { log } from '@odedw/shared';
 
 // Lifx.discover()
@@ -15,26 +15,12 @@ import { log } from '@odedw/shared';
 //     console.error(error);
 //   });
 
-export class Device {
-  // implements LifxDevice {
-  handle(payload: any) {
-    switch (payload.method) {
-      case 'turnOn':
-        this.turnOn(payload as TurnOnMessage);
-        break;
-      case 'turnOff':
-        this.turnOff(payload as TurnOffMessage);
-        break;
-
-      default:
-        break;
-    }
-  }
+export class LifxDevice implements SmartLightInterface {
   lifxLanDevice: LifxLanDevice;
   power: boolean;
   color: any;
-  static create(ip: string, mac: string): Promise<Device> {
-    let instance: Device;
+  static create(ip: string, mac: string): Promise<LifxDevice> {
+    let instance: LifxDevice;
     log.info('Creating LIFX device');
     return (
       Lifx.createDevice({
@@ -42,9 +28,8 @@ export class Device {
         ip,
       })
         .then((d: any) => {
-          instance = new Device(d);
-          // return instance;
-          return instance.turnOff({ duration: 0 });
+          instance = new LifxDevice(d);
+          return instance.turnOff(0);
         })
         // .then(() => instance.setColor('#FFFFFF', 1, 0))
         .then(() => instance)
@@ -68,24 +53,11 @@ export class Device {
       .catch((err) => console.log('failed to set color - ' + err));
   }
 
-  turnOn({ duration }): Promise<void> {
+  turnOn(duration: number): Promise<void> {
     return this.lifxLanDevice.turnOn({ duration });
   }
 
-  turnOff({ duration }): Promise<void> {
+  turnOff(duration: number): Promise<void> {
     return this.lifxLanDevice.turnOff({ duration });
-  }
-
-  toggle(duration: number = 0): Promise<void> {
-    let promise: Promise<void> | undefined;
-    if (!this.power) {
-      promise = this.lifxLanDevice.turnOn({ duration });
-    } else {
-      promise = this.lifxLanDevice.turnOff({ duration });
-    }
-    return promise.then(() => {
-      this.power = !this.power;
-      console.log(`Switched ${this.power ? 'on' : 'off'}`);
-    });
   }
 }

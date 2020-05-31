@@ -1,7 +1,6 @@
 import { WsMessage } from './WsMessage';
 
 export interface SmartLightInterface {
-  toggle: (duration: number) => Promise<void>;
   turnOff: (duration: number) => Promise<void>;
   turnOn: (duration: number) => Promise<void>;
   setColor: (
@@ -11,18 +10,19 @@ export interface SmartLightInterface {
   ) => Promise<void>;
 }
 
-abstract class LifxDeviceMessage implements WsMessage {
+export abstract class SmartLightMessage implements WsMessage {
   abstract method: string;
-  target = 'LifxDevice';
+  static target = 'SmartLight';
+  target: string = SmartLightMessage.target;
   duration: number;
   constructor(duration: number = 0) {
     this.duration = duration;
   }
 }
-export class TurnOnMessage extends LifxDeviceMessage {
+export class TurnOnMessage extends SmartLightMessage {
   method = 'turnOn';
 }
 
-export class TurnOffMessage extends LifxDeviceMessage {
+export class TurnOffMessage extends SmartLightMessage {
   method = 'turnOff';
 }
