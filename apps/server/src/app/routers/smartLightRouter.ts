@@ -4,6 +4,7 @@ import {
   SmartLightMessage,
   TurnOnMessage,
   TurnOffMessage,
+  SetColorMessage,
 } from '@odedw/shared';
 
 export class SmartLightRouter {
@@ -25,7 +26,13 @@ export class SmartLightRouter {
         let turnOnffMessage = msg as TurnOffMessage;
         this.lifxDevice.turnOff(turnOnffMessage.duration);
         break;
-
+      case 'setColor':
+        let setColorMessage = msg as SetColorMessage;
+        this.lifxDevice.setColor(
+          setColorMessage.hex,
+          setColorMessage.brightness,
+          setColorMessage.duration
+        );
       default:
         break;
     }

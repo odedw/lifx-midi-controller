@@ -26,3 +26,14 @@ export class TurnOnMessage extends SmartLightMessage {
 export class TurnOffMessage extends SmartLightMessage {
   method = 'turnOff';
 }
+
+export class SetColorMessage extends SmartLightMessage {
+  method = 'setColor';
+  hex: string;
+  brightness: number;
+  constructor(hex: string, brightness: number, duration:number = 0) {
+    super(duration);
+    this.hex = hex;
+    this.brightness = brightness;
+  }
+}

@@ -1,9 +1,9 @@
-import { SessionEventEmitter } from "./event-emitters/SessionEventEmitter";
-import MidiEventEmitter from "./event-emitters/MidiEventEmitter";
-import { Subscription } from "rxjs";
-import smartLight from "./action-repositiories/SmartLight";
+import { SessionEventEmitter } from './event-emitters/SessionEventEmitter';
+import MidiEventEmitter from './event-emitters/MidiEventEmitter';
+import { Subscription } from 'rxjs';
+import smartLight from './action-repositiories/SmartLight';
 
-let colors = ["#00F1FF", "#0161E8", "#290CFF", "#9B00E8", "#FF019A"];
+let colors = ['#00F1FF', '#0161E8', '#290CFF', '#9B00E8', '#FF019A'];
 let currentColor = colors[0];
 
 const randomColor = () =>
@@ -17,25 +17,25 @@ export class Routine {
     SessionEventEmitter.stop.subscribe(this.unsubscribe.bind(this));
   }
 
-  async subscribe() {
+  subscribe() {
     this.subscriptions = [
-      MidiEventEmitter.noteOn("C3").subscribe(() =>
+      MidiEventEmitter.noteOn('C3').subscribe(() =>
         smartLight.setColor(currentColor, 0.6)
       ),
 
-      MidiEventEmitter.noteOn("D3").subscribe(() =>
+      MidiEventEmitter.noteOn('D3').subscribe(() =>
         smartLight.setColor(currentColor, 1)
       ),
 
-      MidiEventEmitter.noteOn("E3").subscribe(() => {
+      MidiEventEmitter.noteOn('E3').subscribe(() => {
         currentColor = randomColor();
         smartLight.setColor(currentColor, 0.6);
       }),
     ];
 
     currentColor = randomColor();
-    await smartLight.setColor(currentColor, 0.6);
-    await smartLight.turnOn();
+    smartLight.setColor(currentColor, 0.6);
+    smartLight.turnOn();
   }
 
   async unsubscribe() {
