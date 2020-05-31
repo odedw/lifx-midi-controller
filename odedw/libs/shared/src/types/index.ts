@@ -1,1 +1,2 @@
-export * from "./LifxDevice";
+export * from './LifxDevice';
+export * from './WsMessage';

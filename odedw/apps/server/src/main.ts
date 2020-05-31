@@ -13,10 +13,9 @@ async function main(): Promise<void> {
 
     ws.on('message', (message) => {
       console.log('received: %s', message);
-      if (message === 'turnOn') {
-        device.turnOn();
-      } else if (message === 'turnOff') {
-        device.turnOff();
+      const payload = JSON.parse(message);
+      if (payload.target === 'LifxDevice') {
+        device.handle(payload);
       }
     });
 

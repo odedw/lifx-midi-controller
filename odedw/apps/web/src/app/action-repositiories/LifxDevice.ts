@@ -1,5 +1,8 @@
-import { LifxDevice as LifxDeviceInterface } from '@odedw/shared';
-
+import {
+  LifxDevice as LifxDeviceInterface,
+  TurnOnMessage,
+  TurnOffMessage,
+} from '@odedw/shared';
 import * as log from 'loglevel';
 
 class LifxDevice implements LifxDeviceInterface {
@@ -22,15 +25,17 @@ class LifxDevice implements LifxDeviceInterface {
     return Promise.resolve();
   }
 
-  turnOff(duration: number = 0): Promise<void> {
-    log.info('turnOff');
-    this.socket.send('turnOff');
+  turnOn(duration: number = 0): Promise<void> {
+    log.info('turnOn');
+    const turnOnMessage = new TurnOnMessage();
+    this.socket.send(JSON.stringify(turnOnMessage));
     return Promise.resolve();
   }
 
-  turnOn(duration: number = 0): Promise<void> {
-    log.info('turnOn');
-    this.socket.send('turnOn');
+  turnOff(duration: number = 0): Promise<void> {
+    log.info('turnOff');
+    const turnOffMessage = new TurnOffMessage();
+    this.socket.send(JSON.stringify(turnOffMessage));
     return Promise.resolve();
   }
   setColor(

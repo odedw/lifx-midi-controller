@@ -1,6 +1,6 @@
 import Lifx from 'node-lifx-lan';
 import { LifxLanColor, LifxLanDevice } from './types/Lifx';
-import { LifxDevice } from '@odedw/shared';
+import { LifxDevice, TurnOnMessage, TurnOffMessage } from '@odedw/shared';
 // Lifx.discover()
 //   .then((device_list) => {
 //     device_list.forEach((device) => {
@@ -36,7 +36,21 @@ export async function retry<T>(
   }
 }
 
-export class Device implements LifxDevice {
+export class Device {
+  // implements LifxDevice {
+  handle(payload: any) {
+    switch (payload.method) {
+      case 'turnOn':
+        this.turnOn(payload as TurnOnMessage);
+        break;
+      case 'turnOff':
+        this.turnOff(payload as TurnOffMessage);
+        break;
+
+      default:
+        break;
+    }
+  }
   lifxLanDevice: LifxLanDevice;
   power: boolean;
   color: any;
@@ -81,11 +95,11 @@ export class Device implements LifxDevice {
       .catch((err) => console.log('failed to set color - ' + err));
   }
 
-  turnOn(duration: number = 0): Promise<void> {
+  turnOn({ duration }): Promise<void> {
     return this.lifxLanDevice.turnOn({ duration });
   }
 
-  turnOff(duration: number = 0): Promise<void> {
+  turnOff({ duration }): Promise<void> {
     return this.lifxLanDevice.turnOff({ duration });
   }
 
