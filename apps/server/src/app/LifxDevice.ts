@@ -2,6 +2,7 @@ import Lifx from 'node-lifx-lan';
 import { LifxLanColor, LifxLanDevice, LifxLanColorCSS } from './types/Lifx';
 import { SmartLightInterface } from '@odedw/shared';
 import { log, delay } from '@odedw/shared';
+import { performance } from 'perf_hooks';
 
 // Lifx.discover()
 //   .then((device_list) => {
@@ -14,11 +15,15 @@ import { log, delay } from '@odedw/shared';
 //   .catch((error) => {
 //     console.error(error);
 //   });
-
+const MAX_REQUESTS_PER_SECOND = 20;
+const MS_PER_REQUEST = 1000 / MAX_REQUESTS_PER_SECOND;
 export class LifxDevice implements SmartLightInterface {
   lifxLanDevice: LifxLanDevice;
   power: boolean;
   color: LifxLanColorCSS;
+  requestsPerSecond = 0;
+  lastRequestTime: number;
+
   static create(ip: string, mac: string): Promise<LifxDevice> {
     let instance: LifxDevice;
     log.info('Creating LIFX device');
@@ -34,6 +39,12 @@ export class LifxDevice implements SmartLightInterface {
 
   private constructor(lifxLanDevice: LifxLanDevice) {
     this.lifxLanDevice = lifxLanDevice;
+    setInterval(() => {
+      if (this.requestsPerSecond > 0) {
+        log.info(`${this.requestsPerSecond} requests per second`);
+      }
+      this.requestsPerSecond = 0;
+    }, 1000);
   }
 
   blink(increment: number, duration: number): Promise<void> {
@@ -41,7 +52,6 @@ export class LifxDevice implements SmartLightInterface {
     return this.setColor(this.color.css, Math.min(1, brightness + increment), 0)
       .then(() => delay(duration))
       .then(() => this.setColor(this.color.css, brightness, 0));
-    return Promise.resolve();
   }
 
   setColor(
@@ -50,16 +60,40 @@ export class LifxDevice implements SmartLightInterface {
     duration: number = 0
   ): Promise<void> {
     const color = { css: hex, brightness } as LifxLanColorCSS;
-    return this.lifxLanDevice.setColor({ color, duration }).then(() => {
-      this.color = color;
-    });
+    return this.performRequest(() =>
+      this.lifxLanDevice.setColor({ color, duration }).then(() => {
+        this.color = color;
+      })
+    );
   }
 
   turnOn(duration: number): Promise<void> {
-    return this.lifxLanDevice.turnOn({ duration });
+    return this.performRequest(
+      () => this.lifxLanDevice.turnOn({ duration }),
+      true // don't throttle turn on request
+    );
   }
 
   turnOff(duration: number): Promise<void> {
-    return this.lifxLanDevice.turnOff({ duration });
+    return this.performRequest(
+      () => this.lifxLanDevice.turnOff({ duration }),
+      true // don't throttle turn off request
+    );
+  }
+
+  private performRequest(
+    request: () => Promise<void>,
+    ignoreThrottle: boolean = false
+  ): Promise<void> {
+    if (ignoreThrottle) {
+      return request();
+    }
+    const now = performance.now();
+    if (now - this.lastRequestTime < MS_PER_REQUEST) {
+      return Promise.resolve(); // request throttled
+    }
+
+    this.lastRequestTime = now;
+    return request().catch((err) => {}); // ignore timeouts for now
   }
 }
