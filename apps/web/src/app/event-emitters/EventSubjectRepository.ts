@@ -1,5 +1,5 @@
-import { Subject } from "rxjs";
-import * as log from "loglevel";
+import { Subject } from 'rxjs';
+import * as log from 'loglevel';
 
 export class EventSubjectRepository {
   private static subjects: { [key: string]: any } = {};
@@ -7,7 +7,7 @@ export class EventSubjectRepository {
     if (!EventSubjectRepository.subjects[key]) {
       const subject = new Subject<T>();
       subject.subscribe((t) => {
-        log.info(`New ${key} event`);
+        log.debug(`New ${key} event`);
       });
       EventSubjectRepository.subjects[key] = subject;
     }

@@ -4,7 +4,8 @@ import { Subscription } from 'rxjs';
 import smartLight from './action-repositiories/SmartLight';
 import { mapToRange } from '@odedw/shared';
 
-let colors = ['#00F1FF', '#0161E8', '#290CFF', '#9B00E8', '#FF019A'];
+// let colors = ['#00F1FF', '#0161E8', '#290CFF', '#9B00E8', '#FF019A'];
+let colors = ['#FF0018', '#FFA52C', '#FFFF41', '#008018', '#0000F9', '#86007D'];
 let currentColor = colors[0];
 
 const randomColor = () =>
@@ -33,9 +34,10 @@ export class Routine {
         smartLight.setColor(currentColor, 0.6);
       }),
       MidiEventEmitter.noteOn('F3').subscribe(() => {
-        smartLight.blink(0.5, 100);
+        smartLight.blink(0.5, 50);
       }),
       MidiEventEmitter.cc(30).subscribe((e) => {
+        smartLight.setColor(currentColor, mapToRange(e.value, 0, 127, 0, 1));
         // console.log(mapToRange(e.value, 0, 127, 0, 1));
       }),
     ];

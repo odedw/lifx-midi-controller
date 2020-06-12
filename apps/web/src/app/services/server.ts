@@ -34,11 +34,12 @@ class Server {
 
   public async send(message: WsMessage): Promise<void> {
     if (!this.connected) {
-      await this.connect();
+      // await this.connect();
+      return Promise.resolve();
     }
     const json = JSON.stringify(message);
     await this.socket.send(json);
-    log.info('Sent: ', json);
+    log.debug('Sent: ', json);
   }
 }
 

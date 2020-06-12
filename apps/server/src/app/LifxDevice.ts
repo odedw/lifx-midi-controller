@@ -15,7 +15,7 @@ import { performance } from 'perf_hooks';
 //   .catch((error) => {
 //     console.error(error);
 //   });
-const MAX_REQUESTS_PER_SECOND = 20;
+const MAX_REQUESTS_PER_SECOND = 30;
 const MS_PER_REQUEST = 1000 / MAX_REQUESTS_PER_SECOND;
 export class LifxDevice implements SmartLightInterface {
   lifxLanDevice: LifxLanDevice;

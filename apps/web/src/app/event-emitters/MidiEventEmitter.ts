@@ -8,6 +8,7 @@ import { EventSubjectRepository } from './EventSubjectRepository';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { isMatch } from './MidiUtils';
+import { log } from '@odedw/shared';
 
 export default class MidiEventEmitter extends EventEmitter {
   static NOTE_ON_EVENT = 'MidiEventEmitter.NOTE_ON_EVENT';
@@ -19,10 +20,10 @@ export default class MidiEventEmitter extends EventEmitter {
         if (err) reject(err);
 
         // list inputs
-        WebMidi.inputs.forEach((i) => console.log(i.name));
+        // WebMidi.inputs.forEach((i) => log.info(i.name));
 
         const midiInput = WebMidi.inputs.find(
-          (i) => i.name === 'Elektron Digitakt' //'loopMIDI Port' //"Arturia KeyStep 32"
+          (i) => i.name === 'loopMIDI Port' //"Arturia KeyStep 32"
         );
         if (!midiInput) return;
         midiInput.addListener('noteon', 'all', (e) => {
