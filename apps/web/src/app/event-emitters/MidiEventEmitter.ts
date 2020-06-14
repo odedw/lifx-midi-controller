@@ -7,7 +7,7 @@ import WebMidi, {
 } from 'webmidi';
 import { EventSubjectRepository } from './EventSubjectRepository';
 import { Observable } from 'rxjs';
-import { filter, bufferCount } from 'rxjs/operators';
+import { filter, bufferCount, buffer, pairwise, map } from 'rxjs/operators';
 import { isMatch } from './MidiUtils';
 import { log } from '@odedw/shared';
 
@@ -25,7 +25,7 @@ export default class MidiEventEmitter extends EventEmitter {
         // WebMidi.inputs.forEach((i) => log.info(i.name));
 
         const midiInput = WebMidi.inputs.find(
-          (i) => i.name === 'Arturia KeyStep 32'
+          (i) => i.name === 'loopMIDI Port'
         );
         if (!midiInput) return;
 
@@ -75,6 +75,29 @@ export default class MidiEventEmitter extends EventEmitter {
           e.controller.number == ccNumber
         );
       })
+    );
+  }
+
+  static ccTriger(
+    ccNumber: number,
+    threshold: number = 1,
+    channel: IMidiChannel = 'all'
+  ): Observable<boolean> {
+    return EventSubjectRepository.subjectFor<InputEventControlchange>(
+      MidiEventEmitter.CONTROL_CHANGE_EVENT
+    ).pipe(
+      filter((e) => {
+        return (
+          (channel === 'all' || e.channel === channel) &&
+          e.controller.number == ccNumber
+        );
+      }),
+      pairwise(),
+      filter((pair) => {
+        log.info(`${pair[0].value}, ${pair[1].value}`);
+        return pair[0].value < threshold && pair[1].value >= threshold;
+      }),
+      map(() => true)
     );
   }
 
