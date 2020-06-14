@@ -1,8 +1,7 @@
-import * as log from "loglevel";
-import emitters, { EventEmitter } from "../event-emitters";
-import routine from "../routine";
-import lifxDevice from "../action-repositiories/SmartLight";
-import { server } from '../services'
+import * as log from 'loglevel';
+import emitters, { EventEmitter } from '../event-emitters';
+import LifxDemo from '../routines/LifxDemo/LifxDemo';
+import { server } from '../services';
 const createInitPromiseForEmitter = (e: EventEmitter) =>
   e
     .init()
@@ -13,5 +12,5 @@ export default async () => {
   log.setDefaultLevel(log.levels.INFO);
   await Promise.all(emitters.map(createInitPromiseForEmitter));
   await server.init();
-  routine.init();
+  new LifxDemo().init();
 };

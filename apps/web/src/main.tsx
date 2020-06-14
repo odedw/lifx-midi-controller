@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import init from './app/initializations';
+import './index.css';
 
 init();
 
