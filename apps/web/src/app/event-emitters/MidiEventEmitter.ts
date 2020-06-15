@@ -22,9 +22,10 @@ export default class MidiEventEmitter extends EventEmitter {
         if (err) reject(err);
 
         // list inputs
-        // WebMidi.inputs.forEach((i) => log.info(i.name));
+        WebMidi.inputs.forEach((i) => log.info(i.name));
 
         const midiInput = WebMidi.inputs.find(
+          // (i) => i.name === 'Arturia KeyStep 32'
           (i) => i.name === 'loopMIDI Port'
         );
         if (!midiInput) return;
@@ -94,7 +95,6 @@ export default class MidiEventEmitter extends EventEmitter {
       }),
       pairwise(),
       filter((pair) => {
-        log.info(`${pair[0].value}, ${pair[1].value}`);
         return pair[0].value < threshold && pair[1].value >= threshold;
       }),
       map(() => true)
