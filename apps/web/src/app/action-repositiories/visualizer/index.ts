@@ -1,1 +1,1 @@
-export { default as visualizer } from '../../routines/LifxDemo/visualizer';
+export { default as visualizer } from '../../routines/LifxDemo/sketch';

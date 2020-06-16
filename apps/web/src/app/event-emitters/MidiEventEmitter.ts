@@ -1,12 +1,7 @@
 import { EventEmitter } from './types';
-import WebMidi, {
-  InputEventNoteon,
-  IMidiChannel,
-  InputEventControlchange,
-  InputEventClock,
-} from 'webmidi';
+import WebMidi, { InputEventNoteon, IMidiChannel, InputEventControlchange, InputEventClock } from 'webmidi';
 import { EventSubjectRepository } from './EventSubjectRepository';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { filter, bufferCount, buffer, pairwise, map } from 'rxjs/operators';
 import { isMatch } from './MidiUtils';
 import { log } from '@odedw/shared';
@@ -31,67 +26,39 @@ export default class MidiEventEmitter extends EventEmitter {
         if (!midiInput) return;
 
         midiInput.addListener('noteon', 'all', (e) => {
-          log.debug(
-            `channel: ${e.channel}, note: ${e.note.name}${e.note.octave}`
-          );
-          EventSubjectRepository.subjectFor<InputEventNoteon>(
-            MidiEventEmitter.NOTE_ON_EVENT
-          ).next(e);
+          log.debug(`channel: ${e.channel}, note: ${e.note.name}${e.note.octave}`);
+          EventSubjectRepository.subjectFor<InputEventNoteon>(MidiEventEmitter.NOTE_ON_EVENT).next(e);
         });
         midiInput.addListener('controlchange', 'all', (e) => {
-          EventSubjectRepository.subjectFor<InputEventControlchange>(
-            MidiEventEmitter.CONTROL_CHANGE_EVENT
-          ).next(e);
+          EventSubjectRepository.subjectFor<InputEventControlchange>(MidiEventEmitter.CONTROL_CHANGE_EVENT).next(e);
         });
 
         midiInput.addListener('clock', 'all', (e) => {
-          EventSubjectRepository.subjectFor<InputEventClock>(
-            MidiEventEmitter.CLOCK_EVENT
-          ).next(e);
+          EventSubjectRepository.subjectFor<InputEventClock>(MidiEventEmitter.CLOCK_EVENT).next(e);
         });
       });
       resolve();
     });
   }
 
-  static noteOn(
-    note: string = '',
-    channel: IMidiChannel = 'all'
-  ): Observable<InputEventNoteon> {
-    return EventSubjectRepository.subjectFor<InputEventNoteon>(
-      MidiEventEmitter.NOTE_ON_EVENT
-    ).pipe(filter((e) => isMatch(e, note, channel)));
+  static noteOn(note: string = '', channel: IMidiChannel = 'all'): Observable<InputEventNoteon> {
+    return EventSubjectRepository.subjectFor<InputEventNoteon>(MidiEventEmitter.NOTE_ON_EVENT).pipe(
+      filter((e) => isMatch(e, note, channel))
+    );
   }
 
-  static cc(
-    ccNumber: number,
-    channel: IMidiChannel = 'all'
-  ): Observable<InputEventControlchange> {
-    return EventSubjectRepository.subjectFor<InputEventControlchange>(
-      MidiEventEmitter.CONTROL_CHANGE_EVENT
-    ).pipe(
+  static cc(ccNumber: number, channel: IMidiChannel = 'all'): Observable<InputEventControlchange> {
+    return EventSubjectRepository.subjectFor<InputEventControlchange>(MidiEventEmitter.CONTROL_CHANGE_EVENT).pipe(
       filter((e) => {
-        return (
-          (channel === 'all' || e.channel === channel) &&
-          e.controller.number == ccNumber
-        );
+        return (channel === 'all' || e.channel === channel) && e.controller.number == ccNumber;
       })
     );
   }
 
-  static ccTriger(
-    ccNumber: number,
-    threshold: number = 1,
-    channel: IMidiChannel = 'all'
-  ): Observable<boolean> {
-    return EventSubjectRepository.subjectFor<InputEventControlchange>(
-      MidiEventEmitter.CONTROL_CHANGE_EVENT
-    ).pipe(
+  static ccTriger(ccNumber: number, threshold: number = 1, channel: IMidiChannel = 'all'): Observable<boolean> {
+    return EventSubjectRepository.subjectFor<InputEventControlchange>(MidiEventEmitter.CONTROL_CHANGE_EVENT).pipe(
       filter((e) => {
-        return (
-          (channel === 'all' || e.channel === channel) &&
-          e.controller.number == ccNumber
-        );
+        return (channel === 'all' || e.channel === channel) && e.controller.number == ccNumber;
       }),
       pairwise(),
       filter((pair) => {
@@ -101,9 +68,15 @@ export default class MidiEventEmitter extends EventEmitter {
     );
   }
 
+  static ccBind<T>(ccNumber: number, key: keyof T, t: T, channel: IMidiChannel = 'all'): Subscription {
+    return MidiEventEmitter.cc(ccNumber, channel).subscribe((e) => {
+      // log.info(`${key} = ${e.value}`);
+      //@ts-ignore
+      t[key] = e.value;
+    });
+  }
+
   static clock(division: number = 1): Observable<InputEventClock[]> {
-    return EventSubjectRepository.subjectFor<InputEventClock>(
-      MidiEventEmitter.CLOCK_EVENT
-    ).pipe(bufferCount(division));
+    return EventSubjectRepository.subjectFor<InputEventClock>(MidiEventEmitter.CLOCK_EVENT).pipe(bufferCount(division));
   }
 }

@@ -30,22 +30,24 @@ export class Rect extends Shape {
   }
 }
 
-export class Square extends Shape {
-  render(p5: p5): void {
-    throw new Error('Method not implemented.');
-  }
+class ShapeWithSize extends Shape {
   size: number;
-  constructor(
-    x: number,
-    y: number,
-    size: number,
-    fill: Color,
-    opacity: number
-  ) {
+  constructor(x: number, y: number, size: number, fill: Color) {
     super(x, y, fill);
     this.size = size;
   }
-  // grow(increment: number) {
-  //   this.size += increment;
-  // }
+}
+
+export class Square extends ShapeWithSize {
+  render(p5: p5): void {
+    super.render(p5);
+    p5.square(this.x, this.y, this.size);
+  }
+}
+
+export class Circle extends ShapeWithSize {
+  render(p5: p5): void {
+    super.render(p5);
+    p5.ellipse(this.x, this.y, this.size);
+  }
 }
