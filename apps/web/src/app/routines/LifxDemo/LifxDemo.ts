@@ -6,6 +6,7 @@ import { mapToRange, log } from '@odedw/shared';
 import sketch from '../LifxDemo/sketch';
 import Color from 'Color';
 import data, { Data } from './data';
+import { visualizer } from '../../action-repositiories/visualizer';
 
 export default class LifxDemo extends Routine {
   start(): Subscription[] {
@@ -22,6 +23,7 @@ export default class LifxDemo extends Routine {
       // ),
 
       MidiEventEmitter.ccTriger(52, 10).subscribe(() => {
+        visualizer.rotationAmount = 0.05;
         data.switchToRandomColor();
       }),
       // MidiEventEmitter.noteOn('F3').subscribe(() => {
@@ -46,6 +48,7 @@ export default class LifxDemo extends Routine {
       //   // console.log(mapToRange(e.value, 0, 127, 0, 1));
       //   sketch.bassLevel = e.value;
       // }),
+      MidiEventEmitter.ccTriger(56, 1).subscribe((e) => data.bumpHH()),
       MidiEventEmitter.ccBind<Data>(51, 'bassLevel', data),
       MidiEventEmitter.ccBind<Data>(62, 'melodyLevel', data),
     ];
