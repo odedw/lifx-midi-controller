@@ -28,12 +28,12 @@ export class Sketch extends Visualizer {
       p.noStroke()
         .fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255)
         .rect(0, 0, this.w, this.h);
-      // this.setGradient(d.currentColor.hex(), d.currentColor.lighten(2).hex(), p);
-      // const c1 = p.color(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue());
+      // const c1 = p.color(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255);
       // const c2 = p.color(
-      //   d.currentColor.lighten(0.5).red(),
-      //   d.currentColor.lighten(0.5).green(),
-      //   d.currentColor.lighten(0.5).blue()
+      //   d.currentColor.lighten(0.3).red(),
+      //   d.currentColor.lighten(0.3).green(),
+      //   d.currentColor.lighten(0.3).blue(),
+      //   d.melodyLevel * 255
       // );
       // this.setGradient(c1, c2, p);
 
@@ -53,16 +53,19 @@ export class Sketch extends Visualizer {
       p.pop();
 
       // circles
-      p.fill(255).ellipse(this.center.x, this.center.y, CIRCLE_SIZE + d.bassLevel);
-      p.fill(0).ellipse(this.center.x, this.center.y, CIRCLE_SIZE - 20 + d.bassLevel);
-      p.fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255).ellipse(
-        this.center.x,
-        this.center.y,
-        CIRCLE_SIZE - 20 + d.bassLevel
-      );
+      p.fill(255, 0)
+        .stroke(255)
+        .strokeWeight(12)
+        .ellipse(this.center.x, this.center.y, CIRCLE_SIZE + d.bassLevel);
+      // p.fill(0).ellipse(this.center.x, this.center.y, CIRCLE_SIZE - 20 + d.bassLevel);
+      // p.fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255).ellipse(
+      //   this.center.x,
+      //   this.center.y,
+      //   CIRCLE_SIZE - 20 + d.bassLevel
+      // );
 
       if (this.expandAlpha > 0) {
-        p.fill(200, this.expandAlpha).ellipse(this.center.x, this.center.y, this.expandSize);
+        p.noStroke().fill(200, this.expandAlpha).ellipse(this.center.x, this.center.y, this.expandSize);
         this.expandAlpha -= this.expandAlphaSpeed;
         this.expandSize += this.expandSizeSpeed;
       }
@@ -82,6 +85,7 @@ export class Sketch extends Visualizer {
       var inter = p.map(y, 0, this.h, 0, 1);
       var c = p.lerpColor(c1, c2, inter);
       p.stroke(c);
+      p.strokeWeight(1);
       p.line(0, y, this.w, y);
     }
   }
