@@ -9,23 +9,21 @@ import data from './data';
 const CIRCLE_SIZE = 400;
 
 export class Sketch extends Visualizer {
-  alpha: number = 0;
+  // alpha: number = 0;
   rotation: number = 0;
   rotationAmount = 0;
   stripes = new Array<number>(data.numberOfHH).fill(255);
   sketch(p: p5): void {
     p.setup = () => {
       p.createCanvas(this.w, this.h);
-      log.info(this.stripes);
     };
 
     p.draw = () => {
       p.background(0);
 
       // background
-      this.alpha = p.lerp(this.alpha, (255 * d.melodyLevel) / d.maxMelodyLevel, 0.01);
       p.noStroke()
-        .fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), this.alpha)
+        .fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255)
         .rect(0, 0, this.w, this.h);
 
       // stripes
@@ -43,10 +41,9 @@ export class Sketch extends Visualizer {
       p.pop();
 
       // circles
-
       p.fill(255).ellipse(this.center.x, this.center.y, CIRCLE_SIZE + d.bassLevel * 2);
       p.fill(0).ellipse(this.center.x, this.center.y, CIRCLE_SIZE - 20 + d.bassLevel * 2);
-      p.fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), this.alpha).ellipse(
+      p.fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255).ellipse(
         this.center.x,
         this.center.y,
         CIRCLE_SIZE - 20 + d.bassLevel

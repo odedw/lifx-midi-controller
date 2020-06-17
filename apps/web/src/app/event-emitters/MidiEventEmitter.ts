@@ -68,11 +68,17 @@ export default class MidiEventEmitter extends EventEmitter {
     );
   }
 
-  static ccBind<T>(ccNumber: number, key: keyof T, t: T, channel: IMidiChannel = 'all'): Subscription {
+  static ccBind<T>(
+    ccNumber: number,
+    key: keyof T,
+    t: T,
+    factor: number = 1,
+    channel: IMidiChannel = 'all'
+  ): Subscription {
     return MidiEventEmitter.cc(ccNumber, channel).subscribe((e) => {
       // log.info(`${key} = ${e.value}`);
       //@ts-ignore
-      t[key] = e.value;
+      t[key] = e.value * factor;
     });
   }
 
