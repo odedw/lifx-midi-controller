@@ -23,7 +23,9 @@ export default class LifxDemo extends Routine {
       // ),
 
       MidiEventEmitter.ccTriger(52, 10).subscribe(() => {
-        visualizer.rotationAmount = 0.05;
+        visualizer.rotationAmount = 0.03;
+        d.allHH = true;
+        d.bumpHH();
         d.switchToRandomColor();
       }),
       // MidiEventEmitter.noteOn('F3').subscribe(() => {
@@ -48,8 +50,11 @@ export default class LifxDemo extends Routine {
       //   // console.log(mapToRange(e.value, 0, 127, 0, 1));
       //   sketch.bassLevel = e.value;
       // }),
-      MidiEventEmitter.ccTriger(56, 1).subscribe((e) => d.bumpHH()),
-      MidiEventEmitter.ccBind<Data>(51, 'bassLevel', d),
+      MidiEventEmitter.ccTriger(56, 1).subscribe((e) => !d.allHH && d.bumpHH()),
+      MidiEventEmitter.ccTriger(53, 50).subscribe((e) => visualizer.triggerExpand()),
+      MidiEventEmitter.ccBind<Data>(51, 'bassLevel', d, 1),
+      MidiEventEmitter.ccBind<Data>(52, 'snareLevel', d),
+      MidiEventEmitter.ccBind<Data>(56, 'hhLevel', d, 3),
       MidiEventEmitter.ccBind<Data>(62, 'melodyLevel', d, 1 / d.maxMelodyLevel),
     ];
   }
