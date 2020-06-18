@@ -7,20 +7,30 @@ import log from 'loglevel';
 
 const CIRCLE_SIZE = 400;
 
+type Twinkle = {
+  x: number;
+  y: number;
+};
 export class Sketch extends Visualizer {
-  // alpha: number = 0;
   rotation: number = 0;
   rotationAmount = 0;
   stripes = new Array<number>(d.numberOfHH).fill(255);
+  twinkles: Twinkle[] = [];
+  twinkleAlpha = 255;
+  lastTwinkleSide = 'left';
   expandAlphaSpeed = 0.5;
-  expandSizeSpeed = 1.5;
+  expandSizeSpeed = 1.8;
   expandAlpha = 0;
   expandSize = 0;
+
   sketch(p: p5): void {
     p.setup = () => {
       p.createCanvas(this.w, this.h);
     };
-
+    p.mouseClicked = () => {
+      log.info(`${p.mouseX}, ${p.mouseY}`);
+      return false;
+    };
     p.draw = () => {
       p.background(0);
 
@@ -28,14 +38,6 @@ export class Sketch extends Visualizer {
       p.noStroke()
         .fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255)
         .rect(0, 0, this.w, this.h);
-      // const c1 = p.color(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255);
-      // const c2 = p.color(
-      //   d.currentColor.lighten(0.3).red(),
-      //   d.currentColor.lighten(0.3).green(),
-      //   d.currentColor.lighten(0.3).blue(),
-      //   d.melodyLevel * 255
-      // );
-      // this.setGradient(c1, c2, p);
 
       // stripes
       p.push();
@@ -57,18 +59,31 @@ export class Sketch extends Visualizer {
         .stroke(255)
         .strokeWeight(12)
         .ellipse(this.center.x, this.center.y, CIRCLE_SIZE + d.bassLevel);
-      // p.fill(0).ellipse(this.center.x, this.center.y, CIRCLE_SIZE - 20 + d.bassLevel);
-      // p.fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255).ellipse(
-      //   this.center.x,
-      //   this.center.y,
-      //   CIRCLE_SIZE - 20 + d.bassLevel
-      // );
 
       if (this.expandAlpha > 0) {
         p.noStroke().fill(200, this.expandAlpha).ellipse(this.center.x, this.center.y, this.expandSize);
         this.expandAlpha -= this.expandAlphaSpeed;
         this.expandSize += this.expandSizeSpeed;
       }
+
+      //twinkles
+      if (this.twinkles.length >= 5) {
+        this.twinkleAlpha -= 2.5;
+      }
+      if (this.twinkleAlpha <= 0) {
+        this.twinkles = [];
+        this.twinkleAlpha = 255;
+      }
+
+      this.twinkles.forEach((t) => {
+        p.push();
+        p.stroke(255, this.twinkleAlpha);
+        p.translate(t.x, t.y);
+        p.scale(0.5);
+        p.rotate(p.frameCount / 200.0);
+        this.star(p, 0, 0, 5, 20);
+        p.pop();
+      });
     };
   }
 
@@ -78,16 +93,30 @@ export class Sketch extends Visualizer {
     this.expandAlpha = 255;
   }
 
-  setGradient(c1, c2, p) {
-    // noprotect
-    p.noFill();
-    for (var y = 0; y < this.h; y++) {
-      var inter = p.map(y, 0, this.h, 0, 1);
-      var c = p.lerpColor(c1, c2, inter);
-      p.stroke(c);
-      p.strokeWeight(1);
-      p.line(0, y, this.w, y);
+  twinkle() {
+    this.lastTwinkleSide = this.lastTwinkleSide === 'left' ? 'right' : 'left';
+    this.twinkles.push({
+      x: this.p5.random(
+        this.lastTwinkleSide === 'left' ? 0 : this.center.x + CIRCLE_SIZE / 2 + 130,
+        this.lastTwinkleSide === 'left' ? this.center.x - CIRCLE_SIZE / 2 - 130 : this.w
+      ),
+      y: this.p5.random(50, this.h - 50),
+    });
+  }
+
+  star(p, x, y, radius1, radius2, npoints = 5) {
+    let angle = p.TWO_PI / npoints;
+    let halfAngle = angle / 2.0;
+    p.beginShape();
+    for (let a = 0; a < p.TWO_PI; a += angle) {
+      let sx = x + p.cos(a) * radius2;
+      let sy = y + p.sin(a) * radius2;
+      p.vertex(sx, sy);
+      sx = x + p.cos(a + halfAngle) * radius1;
+      sy = y + p.sin(a + halfAngle) * radius1;
+      p.vertex(sx, sy);
     }
+    p.endShape(p.CLOSE);
   }
 }
 

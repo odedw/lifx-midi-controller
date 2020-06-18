@@ -38,8 +38,9 @@ export default class LifxDemo extends Routine {
         smartLight.setColor(d.currentColor.hex(), mapToRange(e.value, 0, 127, 0, 1) * d.melodyLevel);
         // console.log(mapToRange(e.value, 0, 127, 0, 1));
       }),
-      // MidiEventEmitter.cc(50).subscribe((e) => {
+      // MidiEventEmitter.cc(63).subscribe((e) => {
       // square.size = 20 + e.value;
+      // log.info(e.value);
       // }),
       // MidiEventEmitter.ccTriger(50).subscribe(() => {
       // const c = Color(currentColor).alpha(currentAlpha);
@@ -52,6 +53,8 @@ export default class LifxDemo extends Routine {
       // }),
       MidiEventEmitter.ccTriger(56, 1).subscribe((e) => !d.allHH && d.bumpHH()),
       MidiEventEmitter.ccTriger(53, 50).subscribe((e) => visualizer.triggerExpand()),
+      // MidiEventEmitter.ccTriger(63, 30).subscribe((e) => visualizer.twinkle('left')),
+      MidiEventEmitter.noteOn('', 5).subscribe((e) => visualizer.twinkle('left')),
       MidiEventEmitter.ccBind<Data>(51, 'bassLevel', d, 1),
       MidiEventEmitter.ccBind<Data>(52, 'snareLevel', d),
       MidiEventEmitter.ccBind<Data>(56, 'hhLevel', d, 3),
