@@ -1,7 +1,7 @@
 import * as log from 'loglevel';
 import emitters, { EventEmitter } from '../event-emitters';
-import LifxDemo from '../routines/LifxDemo/LifxDemo';
 import { server } from '../services';
+import CgaGlitch from '../routines/CgaGlitch/CgaGlitch';
 const createInitPromiseForEmitter = (e: EventEmitter) =>
   e
     .init()
@@ -11,6 +11,6 @@ const createInitPromiseForEmitter = (e: EventEmitter) =>
 export default async () => {
   log.setDefaultLevel(log.levels.INFO);
   await Promise.all(emitters.map(createInitPromiseForEmitter));
-  await server.init();
-  new LifxDemo().init();
+  server.init();
+  new CgaGlitch().init();
 };
