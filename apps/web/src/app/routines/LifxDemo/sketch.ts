@@ -79,7 +79,7 @@ export class Sketch extends Visualizer {
         p.push();
         p.stroke(255, this.twinkleAlpha);
         p.translate(t.x, t.y);
-        p.scale(0.5);
+        p.scale(0.8 + p.sin(p.frameCount) * 0.05);
         p.rotate(p.frameCount / 200.0);
         this.star(p, 0, 0, 5, 20);
         p.pop();

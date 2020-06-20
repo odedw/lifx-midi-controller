@@ -9,7 +9,6 @@ export class Server {
       log.info('Connected');
 
       ws.on('message', (message) => {
-        // log.info('Received: ', message);
 
         const payload = JSON.parse(message);
         router.route(payload);
