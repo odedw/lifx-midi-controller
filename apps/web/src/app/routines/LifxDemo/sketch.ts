@@ -22,69 +22,66 @@ export class Sketch extends Visualizer {
   expandSizeSpeed = 1.8;
   expandAlpha = 0;
   expandSize = 0;
+  setup(): void {
+    this.p.createCanvas(this.w, this.h);
+  }
+  draw(): void {
+    this.p.background(0);
 
-  sketch(p: p5): void {
-    p.setup = () => {
-      p.createCanvas(this.w, this.h);
-    };
-    p.mouseClicked = () => {
-      log.info(`${p.mouseX}, ${p.mouseY}`);
-      return false;
-    };
-    p.draw = () => {
-      p.background(0);
+    // background
+    this.p
+      .noStroke()
+      .fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255)
+      .rect(0, 0, this.w, this.h);
 
-      // background
-      p.noStroke()
-        .fill(d.currentColor.red(), d.currentColor.green(), d.currentColor.blue(), d.melodyLevel * 255)
-        .rect(0, 0, this.w, this.h);
+    // stripes
+    this.p.push();
+    this.p.translate(this.center.x, this.center.y);
 
-      // stripes
-      p.push();
-      p.translate(this.center.x, this.center.y);
+    this.stripes.forEach((s, i) => {
+      const add = d.allHH ? d.snareLevel : d.currentHH === i ? d.hhLevel : 0;
+      const v = p5.Vector.fromAngle(
+        this.p.radians(this.rotation + 360 / this.stripes.length) * i -
+          this.p.radians(90) +
+          this.p.radians(this.rotation),
+        CIRCLE_SIZE / 2 + 130 + add
+      );
+      this.p.strokeJoin('round').strokeWeight(5).stroke(230).line(0, 0, v.x, v.y);
+    });
+    this.rotation += this.rotationAmount;
+    this.p.pop();
 
-      this.stripes.forEach((s, i) => {
-        const add = d.allHH ? d.snareLevel : d.currentHH === i ? d.hhLevel : 0;
-        const v = p5.Vector.fromAngle(
-          p.radians(this.rotation + 360 / this.stripes.length) * i - p.radians(90) + p.radians(this.rotation),
-          CIRCLE_SIZE / 2 + 130 + add
-        );
-        p.strokeJoin('round').strokeWeight(5).stroke(230).line(0, 0, v.x, v.y);
-      });
-      this.rotation += this.rotationAmount;
-      p.pop();
+    // circles
+    this.p
+      .fill(255, 0)
+      .stroke(255)
+      .strokeWeight(12)
+      .ellipse(this.center.x, this.center.y, CIRCLE_SIZE + d.bassLevel);
 
-      // circles
-      p.fill(255, 0)
-        .stroke(255)
-        .strokeWeight(12)
-        .ellipse(this.center.x, this.center.y, CIRCLE_SIZE + d.bassLevel);
+    if (this.expandAlpha > 0) {
+      this.p.noStroke().fill(200, this.expandAlpha).ellipse(this.center.x, this.center.y, this.expandSize);
+      this.expandAlpha -= this.expandAlphaSpeed;
+      this.expandSize += this.expandSizeSpeed;
+    }
 
-      if (this.expandAlpha > 0) {
-        p.noStroke().fill(200, this.expandAlpha).ellipse(this.center.x, this.center.y, this.expandSize);
-        this.expandAlpha -= this.expandAlphaSpeed;
-        this.expandSize += this.expandSizeSpeed;
-      }
+    //twinkles
+    if (this.twinkles.length >= 5) {
+      this.twinkleAlpha -= 2.5;
+    }
+    if (this.twinkleAlpha <= 0) {
+      this.twinkles = [];
+      this.twinkleAlpha = 255;
+    }
 
-      //twinkles
-      if (this.twinkles.length >= 5) {
-        this.twinkleAlpha -= 2.5;
-      }
-      if (this.twinkleAlpha <= 0) {
-        this.twinkles = [];
-        this.twinkleAlpha = 255;
-      }
-
-      this.twinkles.forEach((t) => {
-        p.push();
-        p.stroke(255, this.twinkleAlpha);
-        p.translate(t.x, t.y);
-        p.scale(0.8 + p.sin(p.frameCount) * 0.05);
-        p.rotate(p.frameCount / 200.0);
-        this.star(p, 0, 0, 5, 20);
-        p.pop();
-      });
-    };
+    this.twinkles.forEach((t) => {
+      this.p.push();
+      this.p.stroke(255, this.twinkleAlpha);
+      this.p.translate(t.x, t.y);
+      this.p.scale(0.8 + this.p.sin(this.p.frameCount) * 0.05);
+      this.p.rotate(this.p.frameCount / 200.0);
+      this.star(this.p, 0, 0, 5, 20);
+      this.p.pop();
+    });
   }
 
   triggerExpand() {

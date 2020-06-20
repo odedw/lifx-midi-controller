@@ -4,11 +4,20 @@ export default abstract class Visualizer {
   p5: p5;
   container: HTMLElement;
   center: { x: number; y: number };
-  abstract sketch(p: p5): void;
   w: number;
   h: number;
+  p: p5;
   constructor() {
     this.sketch = this.sketch.bind(this);
+  }
+
+  abstract setup(): void;
+  abstract draw(): void;
+
+  sketch(p: p5): void {
+    this.p = p;
+    p.setup = this.setup.bind(this);
+    p.draw = this.draw.bind(this);
   }
 
   create() {
